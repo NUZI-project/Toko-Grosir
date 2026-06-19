@@ -1,0 +1,287 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    /* Menggunakan background liner-gradient transparan + gambar */
+    background: linear-gradient(rgba(245, 239, 230, 0.8), rgba(245, 239, 230, 0.8)), 
+                url('background123.png') no-repeat center center fixed;
+    background-size: cover;
+    background-color: #f5efe6; /* Warna cream pastel cadangan kalau gambar gagal load */
+    color: #4a3f35; 
+    padding: 30px 20px;
+}
+
+.app-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* Header dengan skema cokelat redup hangat */
+.main-header {
+    background-color: #8c7863; /* Cokelat Redup Medis/Warm */
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 8px 20px rgba(140, 120, 99, 0.15);
+    margin-bottom: 30px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-logo {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+.logo-area h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.badge {
+    background-color: #d4a373; /* Cokelat Pastel Muda */
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+@media(max-width: 768px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Card dengan nuansa Cream Pastel lembut semi transparan agar background terlihat tipis */
+.card-section {
+    background: rgba(255, 251, 245, 0.93); 
+    border-radius: 14px;
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(74, 63, 53, 0.06);
+    border: 1px solid #e6ded4;
+}
+
+h2 {
+    font-size: 16px;
+    color: #5c4d3c; /* Cokelat Redup */
+    margin-bottom: 8px;
+    border-left: 4px solid #a68b6d; /* Aksen batas cokelat */
+    padding-left: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.subtitle {
+    font-size: 12px;
+    color: #8a7a6b;
+    margin-bottom: 25px;
+    line-height: 1.4;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #6e5d4f;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #dcd1c4;
+    border-radius: 8px;
+    font-size: 13px;
+    background-color: #fffcf7;
+    color: #4a3f35;
+    transition: all 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #a68b6d;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(166, 139, 109, 0.15);
+}
+
+button {
+    cursor: pointer;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+/* Tombol Dompet */
+.btn-primary {
+    background-color: #fff;
+    color: #73604e;
+    border: 1px solid #e6ded4;
+}
+
+.btn-primary:hover {
+    background-color: #fcf8f2;
+    transform: translateY(-1px);
+}
+
+/* Tombol Submit Cokelat Redup Sage/Earthy */
+.btn-success {
+    background-color: #a68b6d;
+    color: white;
+    width: 100%;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(166, 139, 109, 0.2);
+}
+
+.btn-success:hover {
+    background-color: #8c745c;
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    background-color: #e0d7cc;
+    color: #a69c92;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Indikator Status Kanan */
+.status-indicator {
+    background-color: #fdfaf4;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 25px;
+    border: 1px solid #f0e8dd;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.status-item:last-child { margin-bottom: 0; }
+
+.status-item span { color: #8a7a6b; }
+.status-item strong { color: #4a3f35; }
+
+.log-box h3 {
+    font-size: 13px;
+    color: #6e5d4f;
+    margin-bottom: 10px;
+}
+
+/* Konsol log hitam redup agar kontras membaca output enkripsi */
+.console-output {
+    background-color: #2b2621;
+    color: #e6dfd5;
+    padding: 15px;
+    border-radius: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    min-height: 200px;
+    white-space: pre-line;
+    overflow-y: auto;
+    border: 1px solid #3d352e;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+}
+/* Gaya Latar Belakang Modal (Overlay) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Bikin background belakang agak gelap transparan */
+    backdrop-filter: blur(5px); /* Efek blur estetik ala web modern */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Kotak Konten Pop-up Tengah */
+.modal-content {
+    background: #fdfbf7; /* Warna krem hangat senada tema web lu */
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    animation: popupAnimation 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid #bda387; /* Border tipis warna cokelat soft */
+}
+
+/* Animasi Muncul Membal (Pop) */
+@keyframes popupAnimation {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Gaya Icon, Tulisan, dan Tombol di dalam Modal */
+.modal-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+.modal-content h2 {
+    color: #5c4433; /* Cokelat tua teks */
+    font-size: 24px;
+    margin-bottom: 10px;
+    font-family: sans-serif;
+}
+
+.modal-content p {
+    color: #7d6653;
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.modal-btn {
+    background: #a98467; /* Cokelat tombol senada tombol utama lu */
+    color: white;
+    border: none;
+    padding: 12px 35px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.modal-btn:hover {
+    background: #8c6a51;
+}
