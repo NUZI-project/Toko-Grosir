@@ -11,7 +11,7 @@ body {
                 url('background123.png') no-repeat center center fixed;
     background-size: cover;
     background-color: #f5efe6; /* Warna cream pastel cadangan kalau gambar gagal load */
-    color: #4a3f35; 
+    color: #cf0202; 
     padding: 30px 20px;
 }
 
@@ -22,7 +22,7 @@ body {
 
 /* Header dengan skema cokelat redup hangat */
 .main-header {
-    background-color: #8c7863; /* Cokelat Redup Medis/Warm */
+    background-color: #d00000; /* Cokelat Redup Medis/Warm */
     color: #fff;
     padding: 15px 25px;
     border-radius: 14px;
@@ -53,7 +53,7 @@ body {
 }
 
 .badge {
-    background-color: #d4a373; /* Cokelat Pastel Muda */
+    background-color: #ff5454; /* Cokelat Pastel Muda */
     color: #fff;
     font-size: 10px;
     padding: 2px 8px;
@@ -86,9 +86,9 @@ body {
 
 h2 {
     font-size: 16px;
-    color: #5c4d3c; /* Cokelat Redup */
+    color: #d50101; /* Cokelat Redup */
     margin-bottom: 8px;
-    border-left: 4px solid #a68b6d; /* Aksen batas cokelat */
+    border-left: 4px solid #d50101; /* Aksen batas cokelat */
     padding-left: 10px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -96,7 +96,7 @@ h2 {
 
 .subtitle {
     font-size: 12px;
-    color: #8a7a6b;
+    color: #d50101;
     margin-bottom: 25px;
     line-height: 1.4;
 }
@@ -110,7 +110,7 @@ h2 {
     font-size: 12px;
     font-weight: 600;
     margin-bottom: 6px;
-    color: #6e5d4f;
+    color: #d50101;
 }
 
 .form-group input {
@@ -120,13 +120,13 @@ h2 {
     border-radius: 8px;
     font-size: 13px;
     background-color: #fffcf7;
-    color: #4a3f35;
+    color: #d50101;
     transition: all 0.2s;
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: #a68b6d;
+    border-color:#d50101;
     background-color: #fff;
     box-shadow: 0 0 0 3px rgba(166, 139, 109, 0.15);
 }
@@ -144,7 +144,7 @@ button {
 /* Tombol Dompet */
 .btn-primary {
     background-color: #fff;
-    color: #73604e;
+    color: #d50101;
     border: 1px solid #e6ded4;
 }
 
@@ -155,7 +155,7 @@ button {
 
 /* Tombol Submit Cokelat Redup Sage/Earthy */
 .btn-success {
-    background-color: #a68b6d;
+    background-color: #d50101;
     color: white;
     width: 100%;
     margin-top: 10px;
@@ -163,7 +163,7 @@ button {
 }
 
 .btn-success:hover {
-    background-color: #8c745c;
+    background-color: #d50101;
     transform: translateY(-1px);
 }
 
@@ -193,8 +193,8 @@ button:disabled {
 
 .status-item:last-child { margin-bottom: 0; }
 
-.status-item span { color: #8a7a6b; }
-.status-item strong { color: #4a3f35; }
+.status-item span { color: #d50101; }
+.status-item strong { color: #d50101; }
 
 .log-box h3 {
     font-size: 13px;
@@ -257,14 +257,14 @@ button:disabled {
 }
 
 .modal-content h2 {
-    color: #5c4433; /* Cokelat tua teks */
+    color: #d50101; /* Cokelat tua teks */
     font-size: 24px;
     margin-bottom: 10px;
     font-family: sans-serif;
 }
 
 .modal-content p {
-    color: #7d6653;
+    color: #d50101;
     font-size: 15px;
     line-height: 1.5;
     margin-bottom: 25px;
@@ -283,5 +283,5 @@ button:disabled {
 }
 
 .modal-btn:hover {
-    background: #8c6a51;
+    background: #d50101;
 }
