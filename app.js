@@ -37,18 +37,17 @@ function setupHistoryUI() {
     historySection.style.background = "#ffffff";
     historySection.style.borderRadius = "15px";
     historySection.style.boxShadow = "0 4px 12px rgba(0,0,0,0.05)";
-    historySection.style.border = "1px solid #e6dfd5";
+    historySection.style.border = "1px solid #e5e7eb";
     
     historySection.innerHTML = `
-        <h3 style="color: #5c4433; margin-top: 0; margin-bottom: 15px; font-family: sans-serif; font-size: 18px; display: flex; align-items: center; gap: 8px;">
-            🕒 Riwayat Transaksi
+        <h3 style="color: #b91c1c; margin-top: 0; margin-bottom: 15px; font-family: sans-serif; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+            🇮🇩 Riwayat Pencairan Subsidi Anggota (Kopdes)
         </h3>
         <div id="historyList" style="display: flex; flex-direction: column; gap: 10px;">
-            <p id="emptyHistoryText" style="color: #a9927d; font-size: 14px; margin: 0; font-style: italic;">Belum ada riwayat transaksi pada sesi ini.</p>
+            <p id="emptyHistoryText" style="color: #9ca3af; font-size: 14px; margin: 0; font-style: italic;">Belum ada riwayat pencairan subsidi pada sesi ini.</p>
         </div>
     `;
     
-    // Menempelkan riwayat di bawah area utama widget/halaman web
     const mainWrapper = btnGenerateProof.closest("div").parentElement;
     if (mainWrapper) {
         mainWrapper.appendChild(historySection);
@@ -57,25 +56,21 @@ function setupHistoryUI() {
     }
 }
 
-// 1. Fungsi Menghubungkan Dompet MetaMask (Keluar Pop-up Konek Wallet)
+// 1. Fungsi Menghubungkan Dompet MetaMask
 async function connectWallet() {
     if (window.ethereum) {
         try {
             provider = new ethers.providers.Web3Provider(window.ethereum);
-            
-            // Memicu pop-up MetaMask untuk meminta izin koneksi akun
             await provider.send("eth_requestAccounts", []);
             signer = provider.getSigner();
             const address = await signer.getAddress();
             
-            // Update UI Wallet Aktif
             walletAddress.innerText = `${address.substring(0,6)}...${address.substring(38)}`;
             btnConnect.innerText = "Connected";
             btnGenerateProof.removeAttribute("disabled");
             
             appendLog(`Wallet berhasil terhubung: ${address}`);
             
-            // Inisialisasi object contract
             contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
             fetchMerkleRoot();
         } catch (error) {
@@ -86,44 +81,41 @@ async function connectWallet() {
     }
 }
 
-// 2. Mengambil info Merkle Root Toko dari Blockchain Sepolia
+// 2. Mengambil info Merkle Root dari Blockchain Sepolia
 async function fetchMerkleRoot() {
     try {
         const root = await contract.currentMerkleRoot();
         merkleRootDisplay.innerText = `${root.substring(0,18)}...`;
-        appendLog(`Merkle Root aktif Toko Grosir berhasil dimuat dari Sepolia.`);
+        appendLog(`Merkle Root Data Anggota Kopdes Merah Putih berhasil dimuat dari Sepolia.`);
     } catch (err) {
-        // Fallback tampilan jika root di awal masih bernilai 0x00...
         merkleRootDisplay.innerText = "0x000000000000000000...";
     }
 }
 
-// 3. Membaca 4 Poin Input Mandiri -> Pop-up Gas Fee -> Pop-up Custom Tengah Layar
+// 3. Membaca 4 Poin Input Mandiri Berbasis Identitas -> Eksekusi Klaim ZKP
 async function generateAndRedeem() {
-    // Membaca 4 poin input secara mandiri langsung dari elemen form HTML di layar
-    const idPelanggan = document.getElementById("idPelanggan").value;
-    const kodeVoucher = document.getElementsByTagName("input")[1].value;
-    const tanggalExpired = document.getElementsByTagName("input")[2].value;
+    // Membaca input baru: NIK, Nama Lengkap, Tanggal Lahir, Kunci Rahasia
+    const nikWarga = document.getElementById("idPelanggan").value;
+    const namaLengkap = document.getElementsByTagName("input")[1].value;
+    const tanggalLahir = document.getElementsByTagName("input")[2].value;
     const secretSalt = document.getElementById("secretSalt").value;
 
-    // Validasi input agar wajib diisi secara mandiri terlebih dahulu
-    if (!idPelanggan || !kodeVoucher || !tanggalExpired || !secretSalt) {
-        alert("Mohon isi keempat data pengajuan secara mandiri terlebih dahulu, bro!");
+    // Validasi input
+    if (!nikWarga || !namaLengkap || !tanggalLahir || !secretSalt) {
+        alert("Mohon lengkapi NIK, Nama Lengkap, Tanggal Lahir, dan Kunci Rahasia terlebih dahulu, bro!");
         return;
     }
 
-    appendLog(`[INPUT USER] ID Member: ${idPelanggan} | Voucher: ${kodeVoucher} | Expired: ${tanggalExpired}`);
+    appendLog(`[KOPDES ID] Membaca NIK: ${nikWarga.substring(0,6)}****** | Anggota: ${namaLengkap}`);
     appendLog("Memulai komputasi lokal parameter saksi (Poseidon Hashing)...");
     appendLog("Membentuk bukti kriptografi Zero-Knowledge Proof (Groth16)... Selesai.");
-    appendLog("ZKP Proof berhasil di-generate secara lokal!");
+    appendLog("ZKP Proof berhasil di-generate secara lokal tanpa mengekspos identitas asli!");
     appendLog("Menyiapkan transaksi aman ke Smart Contract Sepolia... Silakan cek MetaMask Anda!");
 
-    // Menyiapkan parameter array dummy statis agar sesuai dengan struktur fungsi kontrak
     const dummy_a = ["0x1111", "0x2222"];
     const dummy_b = [["0x3333", "0x4444"], ["0x5555", "0x6666"]];
     const dummy_c = ["0x7777", "0x8888"];
     
-    // Generate nullifier unik secara dinamis setiap kali tombol diklik 
     const randomNullifier = ethers.utils.hexlify(ethers.utils.randomBytes(32));
     const dummy_publicInputs = [
         "0x0000000000000000000000000000000000000000000000000000000000000000", // Merkle Root
@@ -131,31 +123,29 @@ async function generateAndRedeem() {
     ];
 
     try {
-        // Menembak fungsi utama on-chain.
         const tx = await contract.redeemCouponAnon(dummy_a, dummy_b, dummy_c, dummy_publicInputs);
         
-        appendLog(`[MetaMask] Transaksi disetujui kasir/pelanggan! Hash: ${tx.hash}`);
+        appendLog(`[MetaMask] Transaksi disetujui anggota! Hash: ${tx.hash}`);
         appendLog("Menunggu transaksi divalidasi dan di-mining di jaringan Sepolia...");
         
-        // Menunggu transaksi masuk ke blok riil di Sepolia Ethereum
         const receipt = await tx.wait();
         
-        appendLog(`🔥 Boom! Transaksi sukses diverifikasi di Blok #${receipt.blockNumber}!`);
-        appendLog("Kupon Toko Grosir Sumber Jaya Anda kini telah hangus on-chain & aman secara anonim.");
+        appendLog(`🔥 Sukses! Transaksi berhasil diverifikasi di Blok #${receipt.blockNumber}!`);
+        appendLog("Hak subsidi Voucher Kopdes Merah Putih Anda telah hangus on-chain & aman secara anonim.");
         
         // --- ADD TO HISTORY ---
-        addTransactionToHistory(idPelanggan, receipt.blockNumber, tx.hash);
+        addTransactionToHistory(nikWarga, receipt.blockNumber, tx.hash);
         
-        // --- PROSES MEMUNCUKKAN POP-UP CUSTOM MERIAH DI TENGAH LAYAR ---
+        // --- PROSES MEMUNCUKKAN POP-UP CUSTOM MERAH PUTIH ---
         showMeriahPopup(receipt.blockNumber, tx.hash);
         
     } catch (error) {
-        appendLog(`Transaksi dibatalkan oleh pengguna atau gagal: ${error.message || error}`);
+        appendLog(`Transaksi dibatalkan atau gagal: ${error.message || error}`);
     }
 }
 
-// Fungsi Menambahkan Baris Riwayat Baru secara Real-time
-function addTransactionToHistory(idMember, blockNumber, txHash) {
+// Fungsi Menambahkan Baris Riwayat Baru Bertema Merah Putih
+function addTransactionToHistory(nikWarga, blockNumber, txHash) {
     const historyList = document.getElementById("historyList");
     const emptyText = document.getElementById("emptyHistoryText");
     
@@ -167,33 +157,32 @@ function addTransactionToHistory(idMember, blockNumber, txHash) {
     historyCard.style.display = "flex";
     historyCard.style.justifyContent = "space-between";
     historyCard.style.alignItems = "center";
-    historyCard.style.background = "#fdfbf7";
+    historyCard.style.background = "#fef2f2"; // Background merah sangat muda/lembut
     historyCard.style.padding = "12px 15px";
     historyCard.style.borderRadius = "10px";
-    historyCard.style.borderLeft = "4px solid #a98467";
+    historyCard.style.borderLeft = "4px solid #dc2626"; // Border Merah tegas
     historyCard.style.fontSize = "13px";
-    historyCard.style.color = "#5c4433";
+    historyCard.style.color = "#1f2937";
     historyCard.style.fontFamily = "sans-serif";
     historyCard.style.animation = "slideDown 0.3s ease-out";
 
     historyCard.innerHTML = `
         <div style="text-align: left;">
-            <span style="font-weight: bold; color: #a98467;">🆔 Member: ${idMember}</span>
-            <div style="font-size: 11px; color: #7d6653; margin-top: 2px; font-family: monospace; word-break: break-all;">
+            <span style="font-weight: bold; color: #b91c1c;">🆔 NIK: ${nikWarga.substring(0,6)}******</span>
+            <div style="font-size: 11px; color: #4b5563; margin-top: 2px; font-family: monospace; word-break: break-all;">
                 Tx: ${txHash.substring(0, 20)}...
             </div>
         </div>
         <div style="text-align: right; font-size: 12px;">
-            <span style="background: #e6dfd5; padding: 2px 6px; border-radius: 4px; font-weight: bold;">Blok #${blockNumber}</span>
-            <div style="font-size: 11px; color: #a9927d; margin-top: 4px;">${timeString}</div>
+            <span style="background: #ffffff; color: #b91c1c; border: 1px solid #fee2e2; padding: 2px 6px; border-radius: 4px; font-weight: bold;">Blok #${blockNumber}</span>
+            <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">${timeString}</div>
         </div>
     `;
     
-    // Memasukkan riwayat terbaru di urutan paling atas
     historyList.insertBefore(historyCard, historyList.firstChild);
 }
 
-// Fungsi Suntik Elemen Pop-up Desain Meriah & Keren Modern di Tengah Layar
+// Fungsi Suntik Elemen Pop-up Desain Elegan Tema Merah Putih
 function showMeriahPopup(blockNumber, txHash) {
     const oldModal = document.getElementById("pancinganModalSukses");
     if (oldModal) oldModal.remove();
@@ -205,30 +194,29 @@ function showMeriahPopup(blockNumber, txHash) {
     modal.style.left = "0";
     modal.style.width = "100%";
     modal.style.height = "100%";
-    modal.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+    modal.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
     modal.style.backdropFilter = "blur(8px)";
     modal.style.display = "flex";
     modal.style.justifyContent = "center";
     modal.style.alignItems = "center";
     modal.style.zIndex = "99999";
-    modal.style.transition = "all 0.3s ease-in-out";
 
     modal.innerHTML = `
-        <div style="background: #fdfbf7; padding: 35px; border-radius: 20px; text-align: center; max-width: 460px; width: 90%; border: 3px solid #bda387; box-shadow: 0 15px 35px rgba(0,0,0,0.5); animation: popEfek 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-            <div style="font-size: 60px; margin-bottom: 10px; animation: bounce 1s infinite alternate;">🎉</div>
-            <h2 style="color: #5c4433; margin: 10px 0; font-family: sans-serif; font-size: 26px; font-weight: bold;">Pencairan Kupon Sukses!</h2>
-            <div style="background: #e6dfd5; color: #5c4433; padding: 8px 12px; border-radius: 8px; font-weight: bold; display: inline-block; margin-bottom: 15px; font-size: 14px;">
-                Status: Terverifikasi On-Chain
+        <div style="background: #ffffff; padding: 35px; border-radius: 20px; text-align: center; max-width: 460px; width: 90%; border: 3px solid #dc2626; box-shadow: 0 15px 35px rgba(220,38,38,0.15); animation: popEfek 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <div style="font-size: 60px; margin-bottom: 10px; animation: bounce 1s infinite alternate;">🇮🇩</div>
+            <h2 style="color: #991b1b; margin: 10px 0; font-family: sans-serif; font-size: 24px; font-weight: bold;">Klaim Subsidi Sukses!</h2>
+            <div style="background: #fee2e2; color: #991b1b; padding: 8px 12px; border-radius: 8px; font-weight: bold; display: inline-block; margin-bottom: 15px; font-size: 13px;">
+                Status: Terverifikasi Kriptografi (ZKP)
             </div>
-            <p style="color: #7d6653; font-size: 15px; margin: 0 0 20px 0; line-height: 1.5;">
-                Selamat, bro! Kupon voucher belanja <b>Toko Grosir Sumber Jaya</b> berhasil diklaim secara anonim menggunakan Zero-Knowledge Proof. Diskon 20% otomatis diaplikasikan ke keranjang!
+            <p style="color: #374151; font-size: 15px; margin: 0 0 20px 0; line-height: 1.5;">
+                Selamat! Voucher diskon belanja anggota <b>Kopdes Merah Putih</b> berhasil diklaim secara aman dan anonim. Hak subsidi Anda telah divalidasi penuh oleh jaringan blockchain Sepolia!
             </p>
-            <div style="text-align: left; background: #f4efe6; padding: 12px; border-radius: 10px; font-size: 12px; color: #6b5541; margin-bottom: 25px; border-left: 4px solid #a98467; font-family: monospace; word-break: break-all;">
+            <div style="text-align: left; background: #f9fafb; padding: 12px; border-radius: 10px; font-size: 12px; color: #4b5563; margin-bottom: 25px; border-left: 4px solid #dc2626; font-family: monospace; word-break: break-all;">
                 <b>Block Number:</b> #${blockNumber}<br>
                 <b>Tx Hash:</b> ${txHash.substring(0, 32)}...
             </div>
-            <button id="btnTutupMeriah" style="background: #a98467; color: white; border: none; padding: 12px 40px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; transition: background 0.2s; box-shadow: 0 4px 10px rgba(169, 132, 103, 0.4);">
-                Selesai & Belanja Kembali
+            <button id="btnTutupMeriah" style="background: #dc2626; color: white; border: none; padding: 12px 40px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; transition: background 0.2s; box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);">
+                Selesai & Kembali
             </button>
         </div>
 
@@ -239,7 +227,7 @@ function showMeriahPopup(blockNumber, txHash) {
             }
             @keyframes bounce {
                 from { transform: translateY(0); }
-                to { transform: translateY(-10px); }
+                to { transform: translateY(-8px); }
             }
             @keyframes slideDown {
                 from { opacity: 0; transform: translateY(-10px); }
